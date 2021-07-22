@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "aFDrgJrJrzAxTd4BOkh2KDs18I1pC+HdYKMCPb0SsmNX0D9Sx0/V8gC8c84yDdGHRGG6zYqk/QVKC0GmR5Cstw==",
+  "success": true,
+  "projectFilePath": "/opt/rev-shell-generator/template/Program.csproj",
+  "expectedPackageFiles": [
+    "/home/ubuntu/.nuget/packages/microsoft.netframework.referenceassemblies/1.0.0/microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
+    "/home/ubuntu/.nuget/packages/microsoft.netframework.referenceassemblies.net45/1.0.0/microsoft.netframework.referenceassemblies.net45.1.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

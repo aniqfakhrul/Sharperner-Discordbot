@@ -1,0 +1,16 @@
+/opt/rev-shell-generator/template/obj/Debug/net45/Program.AssemblyInfoInputs.cache
+/opt/rev-shell-generator/template/obj/Debug/net45/Program.AssemblyInfo.cs
+/opt/rev-shell-generator/template/obj/Debug/net45/Program.csproj.CoreCompileInputs.cache
+/opt/rev-shell-generator/template/bin/Debug/net45/Program.exe.config
+/opt/rev-shell-generator/template/bin/Debug/net45/Program.exe
+/opt/rev-shell-generator/template/bin/Debug/net45/Program.pdb
+/opt/rev-shell-generator/template/obj/Debug/net45/Program.exe
+/opt/rev-shell-generator/template/obj/Debug/net45/Program.pdb
+/opt/sharperner-bot/template/obj/Debug/net45/Program.AssemblyInfoInputs.cache
+/opt/sharperner-bot/template/obj/Debug/net45/Program.AssemblyInfo.cs
+/opt/sharperner-bot/template/obj/Debug/net45/Program.csproj.CoreCompileInputs.cache
+/opt/sharperner-bot/template/obj/Debug/net45/Program.exe
+/opt/sharperner-bot/template/obj/Debug/net45/Program.pdb
+/opt/sharperner-bot/template/bin/Debug/net45/Program.exe.config
+/opt/sharperner-bot/template/bin/Debug/net45/Program.exe
+/opt/sharperner-bot/template/bin/Debug/net45/Program.pdb

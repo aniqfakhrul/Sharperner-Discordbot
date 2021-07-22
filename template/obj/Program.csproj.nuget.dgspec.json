@@ -1,0 +1,58 @@
+{
+  "format": 1,
+  "restore": {
+    "/opt/rev-shell-generator/template/Program.csproj": {}
+  },
+  "projects": {
+    "/opt/rev-shell-generator/template/Program.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/opt/rev-shell-generator/template/Program.csproj",
+        "projectName": "Program",
+        "projectPath": "/opt/rev-shell-generator/template/Program.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/opt/rev-shell-generator/template/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net45"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "targetAlias": "net45",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net45": {
+          "targetAlias": "net45",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )",
+              "autoReferenced": true
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/ubuntu/dotnet/sdk/5.0.302/RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win10-x64": {
+          "#import": []
+        }
+      }
+    }
+  }
+}
