@@ -3,6 +3,7 @@ import discord
 import os
 from discord.ext.commands import Bot
 import re
+import random
 import base64
 import binascii
 import itertools
@@ -150,13 +151,13 @@ async def on_message(message):
                     await send_text(message, "Sorry dude! something is wrong. Failed to compile")
 
             else:
-                await send_text(message, "invalid base64")
+                await send_text(message, "Dude! this is not a base64 string")
         elif(len(cmd) == 3):
             if(not IsValidIp(cmd[1])):
-                await send_text(message, "Invalid ip address")
+                await send_text(message, "Nope! not a valid IP. Dont trick me :))")
                 return
             elif(not IsValidNumber(cmd[2])):
-                await send_text(message, "Invalid port number")
+                await send_text(message, "herm... invalid port ¯\_(ツ)_/¯")
                 return
             else:
                 ip_address = cmd[1]
@@ -172,7 +173,12 @@ async def on_message(message):
                 else:
                     await send_text(message, "Sorry dude! something is wrong. Failed to compile")
         else:
+            await say_hello(message)
             await send_text(message, banner())
+
+async def say_hello(message):
+    hellos = ["Hello dude!", "Yes?", "How can i help you?", "Hola amigos", "Howdy?" ,"Howdy partner"]
+    await message.channel.send(random.choice(hellos))
 
 async def send_text(message,text):
     await message.channel.send(text)
