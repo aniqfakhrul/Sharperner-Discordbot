@@ -2,6 +2,7 @@
 import discord
 import os
 from discord.ext.commands import Bot
+from dotenv import load_dotenv
 import re
 import random
 import base64
@@ -19,7 +20,8 @@ COMPILER = "/home/ubuntu/dotnet/dotnet"
 
 MORSE_CODE_DICT = {'a':'.-','A':'^.-','b':'-...','B':'^-...','c':'-.-.','C':'^-.-.','d':'-..','D':'^-..','e':'.','E':'^.','f':'..-.','F':'^..-.','g':'--.','G':'^--.','h':'....','H':'^....','i':'..','I':'^..','j':'.---','J':'^.---','k':'-.-','K':'^-.-','l':'.-..','L':'^.-..','m':'--','M':'^--','n':'-.','N':'^-.','o':'---','O':'^---','p':'.--.','P':'^.--.','q':'--.-','Q':'^--.-','r':'.-.','R':'^.-.','s':'...','S':'^...','t':'-','T':'^-','u':'..-','U':'^..-','v':'...-','V':'^...-','w':'.--','W':'^.--','x':'-..-','X':'^-..-','y':'-.--','Y':'^-.--','z':'--..','Z':'^--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','/':'/','=':'...^-','+':'^.^','!':'^..^'}
 
-TOKEN = "ODY3NTgyMjg1NTAzMzk3OTA4.YPjM9w.tBntzXYYq9FTXa1oqVku_wNtvJg" # remove this later
+load_dotenv()
+TOKEN = os.getenv("TOKEN")
 client = discord.Client()
 
 def _generateShellcodeTemplateFile(template_path,morsed_xor_key,morsed_b64aes_key, morsed_b64aes_iv, morsed_shellcode):
