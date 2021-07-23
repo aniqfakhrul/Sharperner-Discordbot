@@ -51,11 +51,10 @@ def iscompiled():
     cmd = f"{COMPILER} build --no-restore {PROJ_PATH}"
     result = subprocess.run(cmd.split(" "), stdout=subprocess.PIPE)
     cmd_output = result.stdout.decode('utf-8')
-    
-    output_filepath = re.findall(outfile_pattern, cmd_output)[0].strip()
-    PROJ_OUTPUT = output_filepath
 
     if "Build succeeded" in cmd_output:
+        output_filepath = re.findall(outfile_pattern, cmd_output)[0].strip()
+        PROJ_OUTPUT = output_filepath
         return True
     else:
         return False
