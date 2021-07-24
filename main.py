@@ -169,11 +169,11 @@ async def generate_payload(message, ip_address, port):
     f = open(PROJ_MAIN,"w").write(template)
 
 def query_list(data, keyword):
+    found = False
     for line in data:
         if keyword.lower() in line.lower():
-            return True
-        else:
-            return False
+            found = True
+    return found
 
 def search(content, keyword):
     result = []
