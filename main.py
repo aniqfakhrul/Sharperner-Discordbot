@@ -10,6 +10,7 @@ import base64
 import binascii
 import itertools
 import string
+import requests
 from Crypto.Cipher import AES
 from Crypto import Random
 
@@ -36,10 +37,16 @@ def _generateTemplateFile(template_path,ip_address, port):
     updated = template.replace("REPLACEIP",ip_address).replace("REPLACEPORT",port)
     return updated
 
-def banner():
-    help = """```
+def banner(shellcode=None, cheatsheet=None):
+    if shellcode:
+        help = """```
 Usage:  !Sharperner 10.10.10.10 4004
         !Sharperner <paste-b64-here>
+```"""
+    elif cheatsheet:
+        help = """```
+Usage:  !help rubeus
+        !help mimikatz
 ```"""
     return help
 
@@ -160,7 +167,41 @@ async def generate_payload(message, ip_address, port):
     template = _generateTemplateFile(template_path, ip_address, port)
     
     f = open(PROJ_MAIN,"w").write(template)
+
+def query_list(data, keyword):
+    for line in data:
+        if keyword.lower() in line.lower():
+            return True
+        else:
+            return False
+
+def search(content, keyword):
+    result = []
+    temp_list = []
+    for line in content:
+        line = line.strip()
+
+        temp_list.append(line)
+
+        if len(line.strip()) == 0 and len(temp_list)>1:
+            # search lah
+            if query_list(temp_list, keyword):
+                temp_list = [i for i in temp_list if i]
+                result.append(list(temp_list))
+
+            # clearkan temp_list
+            temp_list.clear()
     
+    temp_list.clear()
+    return result
+
+def _fetchOnline(urls):
+    content = ""
+    for url in urls:
+        content += requests.get(url).text.replace("```","")
+        content += '\n'
+    
+    return content.split('\n')
 
 @client.event
 async def on_ready():
@@ -170,7 +211,27 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    
+
+    if message.content.startswith('!help'):
+        cmd = parse_cmd(message.content)
+
+        if(len(cmd) == 2):
+            urls =   [
+                        "https://raw.githubusercontent.com/aniqfakhrul/archives/master/arsenals",
+                    ]
+            _filecontent = _fetchOnline(urls)
+            keyword = cmd[1]
+            results = search(_filecontent, keyword)
+            if results:
+                for result in results:
+                    output = '\n'.join(result)
+
+                await send_text(message , f"```{output}```")
+            else:
+                await send_text(message, f"Sorry dude! I can't find that")
+        else:
+            await send_text(message, banner(cheatsheet=True))
+
     if message.content.startswith('!Sharperner'):
         cmd = parse_cmd(message.content)
         if(len(cmd) == 2):
@@ -184,11 +245,11 @@ async def on_message(message):
         elif(len(cmd) == 3):
             if(not IsValidIp(cmd[1])):
                 await send_text(message, "Nope! not a valid IP. Dont trick me :))")
-                await send_text(message, banner())
+                await send_text(message, banner(shellcode=True))
                 return
             elif(not IsValidNumber(cmd[2])):
                 await send_text(message, "herm... invalid port ¯\_(ツ)_/¯")
-                await send_text(message, banner())
+                await send_text(message, banner(shellcode=True))
                 return
             else:
                 ip_address = cmd[1]
@@ -202,7 +263,7 @@ async def on_message(message):
 
         else:
             await say_hello(message)
-            await send_text(message, banner())
+            await send_text(message, banner(shellcode=True))
 
 async def say_hello(message):
     hellos = ["Hello dude!", "Yes?", "How can i help you?", "Hola amigos", "Howdy?" ,"Howdy partner"]
