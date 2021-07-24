@@ -222,9 +222,11 @@ async def on_message(message):
             _filecontent = _fetchOnline(urls)
             keyword = cmd[1]
             results = search(_filecontent, keyword)
+            output = ""
             if results:
                 for result in results:
-                    output = '\n'.join(result)
+                    output += '\n'.join(result)
+                    output += '\n\n'
 
                 await send_text(message , f"```{output}```")
             else:
