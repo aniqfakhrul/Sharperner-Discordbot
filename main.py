@@ -184,7 +184,7 @@ def search(content, keyword):
         ### temp_list.append(line)
 
         ###if len(line.strip() == 0) and len(temp_list)>1:
-        if '###' in line[:3] or '[' in line[:1] and len(temp_list)>1:
+        if line.startswith("#") or (line.strip().startswith("[") and line.strip().endswith("]")) and len(temp_list)>1:
             # search lah
             if query_list(temp_list, keyword):
                 temp_list = [i for i in temp_list if i]
@@ -220,7 +220,7 @@ async def on_message(message):
         if(len(cmd) == 2):
             urls =   [
                         "https://raw.githubusercontent.com/aniqfakhrul/archives/master/arsenals",
-                        #"https://raw.githubusercontent.com/H0j3n/EzpzCheatSheet/main/README.md"
+                        "https://raw.githubusercontent.com/H0j3n/EzpzCheatSheet/main/README.md"
                         ]
             _filecontent = _fetchOnline(urls)
             keyword = cmd[1]
