@@ -163,6 +163,7 @@ async def generate_shellcode_payload(message, blob):
         await send_text(message, banner())
 
 async def generate_payload(message, ip_address, port):
+    await send_text(message, "Generating. Hope it works idk¯\_(ツ)_/¯")
     template_path = f"{TEMPLATE_PATH}/template.cs"
     template = _generateTemplateFile(template_path, ip_address, port)
     
@@ -202,7 +203,7 @@ def _fetchOnline(urls):
     for url in urls:
         content += requests.get(url).text.replace("```bash","").replace("```","")
         content += '\n'
-    
+
     return content.split('\n')
 
 @client.event
@@ -217,13 +218,14 @@ async def on_message(message):
     if message.content.startswith('!help'):
         cmd = parse_cmd(message.content)
 
-        if(len(cmd) == 2):
+        if(not len(cmd) <= 1):
             urls =   [
                         "https://raw.githubusercontent.com/aniqfakhrul/archives/master/arsenals",
-                        "https://raw.githubusercontent.com/H0j3n/EzpzCheatSheet/main/README.md"
+                        "https://raw.githubusercontent.com/H0j3n/EzpzCheatSheet/main/README.md",
+                        "https://raw.githubusercontent.com/m0chan/m0chan.github.io/master/_posts/2018-07-31-Linux-Notes-And-Cheatsheet.md"
                         ]
             _filecontent = _fetchOnline(urls)
-            keyword = cmd[1]
+            keyword = ' '.join(cmd[1:])
             results = search(_filecontent, keyword)
             output = ""
             if results:
