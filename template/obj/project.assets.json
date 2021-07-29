@@ -372,11 +372,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/opt/rev-shell-generator/template/Program.csproj",
+      "projectUniqueName": "/opt/sharperner-bot/template/Program.csproj",
       "projectName": "Program",
-      "projectPath": "/opt/rev-shell-generator/template/Program.csproj",
+      "projectPath": "/opt/sharperner-bot/template/Program.csproj",
       "packagesPath": "/home/ubuntu/.nuget/packages/",
-      "outputPath": "/opt/rev-shell-generator/template/obj/",
+      "outputPath": "/opt/sharperner-bot/template/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/ubuntu/.nuget/NuGet/NuGet.Config"

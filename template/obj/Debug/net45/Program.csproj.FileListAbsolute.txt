@@ -14,3 +14,6 @@
 /opt/sharperner-bot/template/bin/Debug/net45/Program.exe.config
 /opt/sharperner-bot/template/bin/Debug/net45/Program.exe
 /opt/sharperner-bot/template/bin/Debug/net45/Program.pdb
+/opt/sharperner-bot/template/file.exe/Program.exe.config
+/opt/sharperner-bot/template/file.exe/Program.exe
+/opt/sharperner-bot/template/file.exe/Program.pdb
