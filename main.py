@@ -172,7 +172,7 @@ async def generate_payload(message, ip_address, port):
 def query_list(data, keyword):
     found = False
     for line in data:
-        if keyword.lower() in line.lower():
+        if all(word in line.lower() for word in keyword):
             found = True
     return found
 
@@ -225,7 +225,8 @@ async def on_message(message):
                         "https://raw.githubusercontent.com/m0chan/m0chan.github.io/master/_posts/2018-07-31-Linux-Notes-And-Cheatsheet.md"
                         ]
             _filecontent = _fetchOnline(urls)
-            keyword = ' '.join(cmd[1:])
+            #keyword = ' '.join(cmd[1:])
+            keyword = [word.lower() for word in cmd[1:]]
             results = search(_filecontent, keyword)
             output = ""
             if results:
@@ -233,12 +234,19 @@ async def on_message(message):
                     output += '\n'.join(result)
                     output += '\n\n'
 
-                try:
+                if len(output) <= 1950 :
                     await send_text(message , f"```{output}```")
-                except:
-                    await send_text(message, "Cuba try something more specific?")
+                else:
+                    output = '\n'.join(results[0])
+                    await send_text(message, f"```{output}```")
+                    #f = open("/tmp/result.txt","w").write(output)
+                    #with open("/tmp/result.txt","rb").read() as file:
+                    #    await message.channel.send(file=discord.File(file, "result.txt"))
+                    #os.remove("/tmp/result.txt")
             else:
                 await send_text(message, f"Sorry dude! I can't find that")
+
+            results.clear()
         else:
             await send_text(message, banner(cheatsheet=True))
 
