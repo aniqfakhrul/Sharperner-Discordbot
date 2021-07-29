@@ -55,7 +55,7 @@ def parse_cmd(cmd):
 
 def iscompiled():
     outfile_pattern = r"(\/.*[^\/]?\.exe)"
-    cmd = f"{COMPILER} build --no-restore {PROJ_PATH}"
+    cmd = f"{COMPILER} build {PROJ_PATH}"
     result = subprocess.run(cmd.split(" "), stdout=subprocess.PIPE)
     cmd_output = result.stdout.decode('utf-8')
 
