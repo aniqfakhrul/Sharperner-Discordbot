@@ -13,13 +13,14 @@ import string
 import requests
 from Crypto.Cipher import AES
 from Crypto import Random
+from itertools import islice
 
 CSPROJ_ROOT = f"{os.getcwd()}/template"
 PROJ_MAIN = f"{CSPROJ_ROOT}/Program.cs"
 PROJ_PATH = f"{CSPROJ_ROOT}/Program.csproj"
 TEMPLATE_PATH = f"{os.getcwd()}/templates"
 PROJ_OUTPUT = f"{CSPROJ_ROOT}/bin/Debug/net45/Program.exe"
-COMPILER = "/home/ubuntu/dotnet/dotnet"
+COMPILER = "~/dotnet/dotnet"
 
 MORSE_CODE_DICT = {'a':'.-','A':'^.-','b':'-...','B':'^-...','c':'-.-.','C':'^-.-.','d':'-..','D':'^-..','e':'.','E':'^.','f':'..-.','F':'^..-.','g':'--.','G':'^--.','h':'....','H':'^....','i':'..','I':'^..','j':'.---','J':'^.---','k':'-.-','K':'^-.-','l':'.-..','L':'^.-..','m':'--','M':'^--','n':'-.','N':'^-.','o':'---','O':'^---','p':'.--.','P':'^.--.','q':'--.-','Q':'^--.-','r':'.-.','R':'^.-.','s':'...','S':'^...','t':'-','T':'^-','u':'..-','U':'^..-','v':'...-','V':'^...-','w':'.--','W':'^.--','x':'-..-','X':'^-..-','y':'-.--','Y':'^-.--','z':'--..','Z':'^--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','/':'/','=':'...^-','+':'^.^','!':'^..^'}
 
@@ -45,8 +46,8 @@ Usage:  !Sharperner 10.10.10.10 4004
 ```"""
     elif cheatsheet:
         help = """```
-Usage:  !help rubeus
-        !help mimikatz
+Usage:  !bantu print nightmare
+        !bantu mimikatz
 ```"""
     return help
 
@@ -201,10 +202,16 @@ def search(content, keyword):
 def _fetchOnline(urls):
     content = ""
     for url in urls:
-        content += requests.get(url).text.replace("```bash","").replace("```","")
+        content += requests.get(url).text.replace("```bash","").replace("```code","").replace("```","")
         content += '\n'
 
     return content.split('\n')
+
+def get_from_other(query):
+    url = "https://gist.github.com/w00tc/486825a0b7c593789b1952878dd86ff5"                                                                                                                                                                     
+    res = requests.get(url)                                                                                                                                                                                                                    
+    results = re.findall(f"js-file-line\">(.*{query}.*)<\/td>", res.text)                                                                                                                                                                       
+    return results
 
 @client.event
 async def on_ready():
@@ -215,7 +222,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!help'):
+    if message.content.startswith('!bantu'):
         cmd = parse_cmd(message.content)
 
         if(not len(cmd) <= 1):
@@ -237,18 +244,54 @@ async def on_message(message):
                 if len(output) <= 1950 :
                     await send_text(message , f"```{output}```")
                 else:
-                    output = '\n'.join(results[0])
-                    await send_text(message, f"```{output}```")
+                    # Limit check
+                    limits = 0
+                    for result in results:
+                        if limits < 5:
+                            # Implement Checkers and Unique List
+                            check = len('\n'.join(result))
+                            if check <= 1950:
+                                output = '\n'.join(result)
+                                await send_text(message , f"```{output}```")
+                            else:
+                                listUniq = []
+                                first_half = result[:len(result)//2]
+                                output = '\n'.join(first_half)
+                                await send_text(message , f"```{output}```")
+                                second_half = result[len(result)//2:]
+                                output = '\n'.join(second_half)
+                                await send_text(message , f"```{output}```")
+#                                print(result)
+#                                output = '\n'.join(result)
+#                                await send_text(message , f"```{output}```")
+                            limits += 1
+                        else:
+                            break
+                    # Original
+                    #for result in results:
+                    #    output = '\n'.join(result)
+                    #    await send_text(message, f"```{output}```")
                     #f = open("/tmp/result.txt","w").write(output)
                     #with open("/tmp/result.txt","rb").read() as file:
                     #    await message.channel.send(file=discord.File(file, "result.txt"))
                     #os.remove("/tmp/result.txt")
             else:
-                await send_text(message, f"Sorry dude! I can't find that")
+                await send_text(message, f"Cant find any. Searching from other links...")
+                query = cmd[1]
+                results = get_from_other(query)
+                output = "\n".join(results).replace("&amp;","&").replace("&quot;",'"').replace("&apos;","'").replace("&gt;",">").replace("&lt;","<")
+                if output:
+                    await send_text(message, f"```{output}```")
+                else:
+                    await send_text(message, "Nope nothing :(")
+
 
             results.clear()
         else:
             await send_text(message, banner(cheatsheet=True))
+
+    if message.content.startswith('!comel'):
+        await send_text(message, f"https://cataas.com/cat/says/hi%20{message.author}")
 
     if message.content.startswith('!Sharperner'):
         cmd = parse_cmd(message.content)

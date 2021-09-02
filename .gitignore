@@ -1,4 +1,5 @@
 .env
+main.py.bak
 venv
 template/[Bb]in
 template/[Oo]bj
